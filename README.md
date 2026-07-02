@@ -29,7 +29,7 @@
 
 ## 1 About The Project
 
-**Zoo Management System** is a comprehensive object-oriented application that simulates the management of a virtual zoo. The system handles multiple animal families, supports a generic veterinary clinic, persists state to a binary file, and exposes a clean API to a web-based front-end via the `IZoo` interface. It demonstrates the full power of Java's OOP toolkit — inheritance, polymorphism, generics, custom exceptions, and serialization — through a practical, evolving domain.
+**Zoo Management System** is a comprehensive object-oriented application that simulates the management of a virtual zoo. The system handles multiple animal families, supports a generic veterinary clinic, persists state to a binary file, and exposes a clean API to a web-based front-end via the `IZoo` interface. It demonstrates the full power of Java's OOP toolkit: inheritance, polymorphism, generics, custom exceptions, and serialization, through a practical, evolving domain.
 
 The project was developed as the final project for the **Object-Oriented Programming and Java (10128)** course in my Computer Science BSc at Afeka Tel Aviv Academic College of Engineering.
 
@@ -38,7 +38,7 @@ The project was developed as the final project for the **Object-Oriented Program
 
 ## 2 Key Features
 
-- **Three Animal Families**: Predators (Lions, Tigers), Penguins, and Fish (Aquarium Fish, Goldfish, Clownfish) — each with type-specific behavior.
+- **Three Animal Families**: Predators (Lions, Tigers), Penguins, and Fish (Aquarium Fish, Goldfish, Clownfish), each with type-specific behavior.
 - **Polymorphic Behavior**: Every animal implements `feed()`, `makeNoise()`, and `ageOneYear()` with its own logic.
 - **Penguin Leadership System**: One penguin is designated leader; when removed, the next-tallest is automatically promoted.
 - **Multi-criteria Sorting**: Sort penguins by height (`Comparable`), or by name and age using custom `Comparator` classes.
@@ -56,7 +56,7 @@ The project follows a modular OOP architecture with strict separation between th
 
 ```
 com.example.zoo.ass3/
-├── manage/                # Controller layer — bridge between UI and Zoo
+├── manage/                # Controller layer: bridge between UI and Zoo
 │   └── Manage.java        # Implements IZoo interface
 ├── models/                # Domain entities and aggregates
 │   ├── Animal.java        # Abstract base class
@@ -96,7 +96,7 @@ Below is a table detailing the **key components** and their roles.
 | `MedicalTreatment`   | **Value Object**     | Represents a single medical treatment with description and date.         |
 | `GeneralException`   | **Custom Exception** | Root of the validation exception hierarchy.                              |
 
-### 🧠 OOP Principles Demonstrated
+### OOP Principles Demonstrated
 
 | Principle              | Implementation                                                       |
 | :--------------------- | :------------------------------------------------------------------- |
@@ -128,9 +128,9 @@ To get a local copy up and running, follow these steps.
 
 *   **Java 17+** installed
     *   Verify by running `java -version` in your terminal
-*   **IntelliJ IDEA** (recommended) — https://www.jetbrains.com/idea/
+*   **IntelliJ IDEA** (recommended): https://www.jetbrains.com/idea/
 *   No Node.js / npm required
-*   Internet connection (first run only — Maven downloads dependencies)
+*   Internet connection (first run only, Maven downloads dependencies)
 
 ### 6.2 Installation
 1. Clone the repo
@@ -147,7 +147,7 @@ git clone https://github.com/Royzalah/java-oop-zoo-management.git
     *   **Windows**: Double-click `run.bat`
     *   **Mac/Linux**: `chmod +x run.sh && ./run.sh`
 
-4. Open your browser at **http://localhost:8080** — the UI will load
+4. Open your browser at **http://localhost:8080**, the UI will load
 
 ### 6.3 Verifying the Server
 
@@ -169,7 +169,7 @@ You should receive:
 *   **Browse the zoo**: Click *Show zoo details* to see all animals grouped by family.
 *   **Manage animals**: Add new animals via *Add animal*, feed them all with *Feed all animals*, or hear their sounds with *Show sound all animals*.
 *   **Sort penguins**: Use *Show penguins* and switch between sorting by height, name, or age.
-*   **Age the zoo**: Click *Show increasing all animal age by One year* to advance time — animals will age, lose happiness, and may be removed.
+*   **Age the zoo**: Click *Show increasing all animal age by One year* to advance time; animals will age, lose happiness, and may be removed.
 *   **Veterinary clinic**: Click *Show Veterinary Clinic* to view animals receiving medical treatment.
 *   **Save & exit**: Click *Exit* to persist all data to `zoo.data` for the next session.
 
@@ -196,13 +196,6 @@ The **OOP backend** (`Manage`, `Zoo`, all animal models, exceptions, custom comp
  <b>Roei Zalah</b>
  <br>
  CS Student @ Afeka College
- <br><br>
- <a href="https://github.com/Royzalah">
-   <img src="https://img.shields.io/badge/GitHub-Royzalah-181717?style=for-the-badge&logo=github" alt="GitHub" />
- </a>
- <a href="https://linkedin.com/in/roeizalah">
-   <img src="https://img.shields.io/badge/LinkedIn-roeizalah-0A66C2?style=for-the-badge&logo=linkedin" alt="LinkedIn" />
- </a>
 </div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
