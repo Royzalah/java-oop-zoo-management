@@ -16,9 +16,6 @@ public class MedicalTreatment implements Serializable {
         return date;
     }
 
-    public String getDescription() {
-        return description;
-    }
 
     @Override
     public String toString() {

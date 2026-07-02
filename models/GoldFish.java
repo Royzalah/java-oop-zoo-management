@@ -5,14 +5,16 @@ import com.example.zoo.ass3.exceptions.GeneralException;
 import com.example.zoo.ass3.general.enums.Color;
 import com.example.zoo.ass3.general.enums.Pattern;
 
-public class GoldFish extends Fish {
-    private final static int MAX_AGE = 12;
+import java.io.Serializable;
+
+public class GoldFish extends Fish implements Serializable {
     private final static double EAT = 1f;
     public static final Color[] AVAILABLE_COLORS = {Color.GOLD, Color.ORANGE, Color.YELLOW, Color.BLACK};
+    public final static int LIFE_EXPECTANCY = 12;
     private Color color;
 
     public GoldFish(int age, double length, Color color) throws GeneralException {
-        super(age, length, Pattern.SMOOTH);
+        super(age, length, Pattern.SMOOTH, LIFE_EXPECTANCY);
         setColor(color);
     }
 
@@ -32,12 +34,8 @@ public class GoldFish extends Fish {
 
     @Override
     public double feed() {
+        happiness = MAX_HAPPINESS;
         return EAT;
-    }
-
-    @Override
-    public int getMaxAge() {
-        return MAX_AGE;
     }
 
     @Override

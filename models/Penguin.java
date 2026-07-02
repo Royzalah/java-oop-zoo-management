@@ -5,29 +5,41 @@ import com.example.zoo.ass3.exceptions.GeneralException;
 import com.example.zoo.ass3.exceptions.HeightException;
 import com.example.zoo.ass3.exceptions.NameException;
 
-public class Penguin extends Animal implements Comparable<Penguin> {
-    public final static int MAX_AGE = 6;
+import java.io.Serializable;
+
+public class Penguin extends Animal implements Leaderable, Serializable, Comparable<Penguin> {
+    public final static int MAX_AGE = 50;
     public final static int MAX_HEIGHT = 220;
     private final static double EAT = 1f;
+    public final static int LIFE_EXPECTANCY = 6;
     private String name;
+    private int age;
     private double height;
     private Penguin next;
     private boolean leader;
 
     public Penguin(String name, int age, double height) throws GeneralException {
+        super(LIFE_EXPECTANCY);
         setName(name);
         setAge(age);
         setHeight(height);
+        this.leader = false;
     }
 
-    public Penguin(Penguin penguin) {
-        this.name = penguin.getName();
-        this.age = penguin.getAge();
-        this.height = penguin.getHeight();
+    public Penguin(Penguin other) {
+        super(LIFE_EXPECTANCY);
+        name = other.name;
+        age = other.age;
+        height = other.height;
+        leader = other.leader;
     }
 
     public double feed() {
-        return EAT;
+        double eat = isLeader() ? 2 * EAT : EAT;
+        if (next != null) {
+            return eat + next.feed();
+        }
+        return eat;
     }
 
     @Override
@@ -41,6 +53,11 @@ public class Penguin extends Animal implements Comparable<Penguin> {
         return sb.toString();
     }
 
+    @Override
+    public String getUnit() {
+        return "fish";
+    }
+
     public String getName() {
         return name;
     }
@@ -50,6 +67,10 @@ public class Penguin extends Animal implements Comparable<Penguin> {
             throw new NameException();
         }
         this.name = name;
+    }
+
+    public int getAge() {
+        return age;
     }
 
     public void setAge(int age) throws AgeException {
@@ -78,6 +99,12 @@ public class Penguin extends Animal implements Comparable<Penguin> {
         this.next = next;
     }
 
+    @Override
+    public String toString() {
+        return name + ", age: " + age + ", height: " + height + (isLeader() ? ", I can lead the Group" : "");
+    }
+
+    @Override
     public boolean isLeader() {
         return leader;
     }
@@ -86,34 +113,9 @@ public class Penguin extends Animal implements Comparable<Penguin> {
         this.leader = leader;
     }
 
-    public void addPenguin(Penguin newPenguin) {
-        if (next == null) {
-            next = newPenguin;
-            return;
-        }
-
-        if (next.getHeight() < newPenguin.getHeight()) {
-            newPenguin.setNext(next);
-            next = newPenguin;
-            return;
-        }
-
-        next.addPenguin(newPenguin);
-    }
-
     @Override
-    public int getMaxAge() {
-        return MAX_AGE;
-    }
-
-    @Override
-    public String toString() {
-        return name + ", age: " + age + ", height: " + height;
-    }
-
-    @Override
-    public int compareTo(Penguin other) {
-        return Double.compare(other.height, height);
+    public int compareTo(Penguin o) {
+        return Double.compare(o.height, height);
     }
 }
 

@@ -34,18 +34,29 @@ public class Zoo implements Serializable {
     }
 
     public void addPenguin(Penguin penguin) throws PenguinHeightException {
+        // first leader penguin
         Penguin leader = getPenguinsLeader();
-
         if (leader == null) {
-            animals.get(Penguin.class.getSimpleName()).add(penguin);
+            penguin.setLeader(true);
+            animals.put(Penguin.class.getSimpleName(), new ArrayList<>(List.of(penguin)));
             return;
         }
-
+        // check valid height against leader penguin
         if (penguin.getHeight() > leader.getHeight()) {
             throw new PenguinHeightException();
         }
-
-        leader.addPenguin(penguin);
+        Penguin temp = leader;
+        Penguin prev = null;
+        while (temp != null && temp.getHeight() > penguin.getHeight()) {
+            prev = temp;
+            temp = temp.getNext();
+        }
+        if (temp == null) {
+            prev.setNext(penguin);
+        } else if (prev != null) {
+            prev.setNext(penguin);
+            penguin.setNext(temp);
+        }
     }
 
     private Penguin getPenguinsLeader() {
@@ -117,27 +128,22 @@ public class Zoo implements Serializable {
 
     public List<FoodSummary> feedAnimals() {
         Map<String, FoodSummary> totals = new HashMap<>();
-
-        for (List<Animal> animalList : animals.values()) {
-            if (animalList == null) continue;
-            for (Animal a : animalList){
-                String type = a.getClass().getSimpleName();
-                double eaten = a.feed();
-                a.setHappiness(100);
-
-                String unit =
-                        (a instanceof Penguin)  ? "fish" :
-                        (a instanceof Predator) ? "Kg of meat" :
-                        (a instanceof Fish)     ? "dish of fish food" :
-                                                "units";
-
-                FoodSummary fs = totals.computeIfAbsent(type, k -> new FoodSummary(type, 0.0, unit));
-                fs.setAmount(set2Digits(fs.getAmount() + eaten));
+        FoodSummary temp;
+        for (List<Animal> list : animals.values()) {
+            for (Animal animal : list) {
+                String type = animal.getClass().getSimpleName();
+                double value = animal.feedAnimal();
+                temp = totals.get(type);
+                if (temp == null) {
+                    temp = new FoodSummary(type, 0.0, animal.getUnit());
+                }
+                temp.setAmount(set2Digits(temp.getAmount() + value));
+                totals.put(type, temp);
             }
         }
-
         return new ArrayList<>(totals.values());
     }
+
 
     public String showAnimalsSounds() {
         StringBuilder sb = new StringBuilder();
@@ -158,104 +164,42 @@ public class Zoo implements Serializable {
 
     public List<String> increasingAgeOneYear() {
         List<String> results = new ArrayList<>();
-        Random random = new Random();
-        results.add("All Animals was added one year..");
-
-        for (String type : animals.keySet()) {
-            List<Animal> newList = new ArrayList<>();
-
-            for (Animal animal : animals.get(type)) {
-                if (animal instanceof Penguin leader) {
-                    Penguin updatedLeader = processPenguinChain(leader, random, results);
-
-                    if (updatedLeader != null) {
-                        updatedLeader.setLeader(true);
-                        newList.add(updatedLeader);
-                    }
-                    continue;
-                }
-
-                if (updateAndCheckSurvival(animal, random, results)) {
-                    newList.add(animal);
+        results.add("All Animals was added on year..");
+        for (List<Animal> list : animals.values()) {
+            Iterator<Animal> it = list.iterator();
+            while (it.hasNext()) {
+                Animal animal = it.next();
+                if (!animal.ageOneYear()) {
+                    results.add(animal + " was deleted");
+                    it.remove();
                 }
             }
-
-            animals.put(type, newList);
         }
         return results;
     }
 
-    private boolean updateAndCheckSurvival(Animal animal, Random random, List<String> results) {
-        animal.ageOneYear();
-
-        if (animal.getAge() > animal.getMaxAge()) {
-            results.add(animal + " was deleted");
-            return false;
-        }
-
-        animal.setHappiness(animal.getHappiness() - random.nextInt(15, 31));
-        if (animal.getHappiness() <= 0) {
-            results.add(animal + " was deleted");
-            return false;
-        }
-
-        return true;
-    }
-
-    private Penguin processPenguinChain(Penguin leader, Random random, List<String> results) {
-        Penguin newLeader = null;
-        Penguin tail = null;
-
-        for (Penguin p = leader; p != null; ) {
-            Penguin next = p.getNext();
-            if (!updateAndCheckSurvival(p, random, results)) {
-                p = next;
-                continue;
-            }
-
-            p.setNext(null);
-            p.setLeader(false);
-
-            if (newLeader == null) {
-                newLeader = p;
-            } else {
-                tail.setNext(p);
-            }
-            tail = p;
-
-            p = next;
-        }
-
-        // new leader
-        if (newLeader != null) {
-            newLeader.setLeader(true);
-        }
-
-        return newLeader; // may be null if all penguins died
-    }
-
     public void init() throws GeneralException {
-        Penguin penguin = new Penguin("Private", 6, 200f);
+        Penguin penguin = new Penguin("Doris", 12, 200f);
         addPenguin(penguin);
-        penguin = new Penguin("Kowalski", 2, 51.5);
+        penguin = new Penguin("Shalom", 2, 51.5);
         addPenguin(penguin);
-        penguin = new Penguin("Skipper", 5, 162.8);
+        penguin = new Penguin("Bar", 10, 162.8);
         addPenguin(penguin);
         veterinaryClinic.addAnimal(penguin);
         veterinaryClinic.addTreatment(penguin, new MedicalTreatment("Antibiotic treatment for infection"));
-        Lion lion = new Lion("Pini", 5, 80, Gender.MALE);
+        Lion lion = new Lion("Barak", 5, 80, Gender.MALE);
         addPredator(lion);
-        lion = new Lion("Simba", 12, 180, Gender.MALE);
+        lion = new Lion("Dany", 12, 180, Gender.MALE);
         addPredator(lion);
-        lion = new Lion("Adi Himelbloy", 3, 50, Gender.FEMALE);
+        lion = new Lion("Ana", 3, 50, Gender.FEMALE);
         addPredator(lion);
         veterinaryClinic.addAnimal(lion);
         veterinaryClinic.addTreatment(lion, new MedicalTreatment("Dental check-up"));
-        lion = new Lion("Shaked", 15, 200, Gender.FEMALE);
+        lion = new Lion("Tami", 15, 200, Gender.FEMALE);
         addPredator(lion);
-        Tiger tiger = new Tiger("Rita", 5, 80, Gender.FEMALE);
+        Tiger tiger = new Tiger("Dana", 5, 80, Gender.FEMALE);
         addPredator(tiger);
-        tiger = new Tiger("Rami", 9, 120, Gender.MALE);
+        tiger = new Tiger("Ringo", 9, 120, Gender.MALE);
         veterinaryClinic.addAnimal(tiger);
         veterinaryClinic.addTreatment(tiger, new MedicalTreatment("Routine health examination"));
         addPredator(tiger);
@@ -466,46 +410,34 @@ public class Zoo implements Serializable {
         }
     }
 
-    public List<Penguin> getPenguins(String sortBy) {
+    public List<Penguin> getPenguins() throws GeneralException {
         List<Penguin> penguins = new ArrayList<>();
         Penguin leader = getPenguinsLeader();
-        Penguin temp = leader;
+        if (leader == null) {
+            return penguins;
+        }
+        penguins.add(new Penguin(leader));
+        Penguin temp = leader.getNext();
         while (temp != null) {
-            Penguin copy = new Penguin(temp);
-            copy.setLeader(temp == leader);
-            penguins.add(copy);
+            penguins.add(new Penguin(temp));
             temp = temp.getNext();
         }
-
-        List<Penguin> sorted = new ArrayList<>(penguins); // copy
-
-        switch (sortBy.toLowerCase()) {
-            case "name" -> sorted.sort(new ComparePenguinByName()); // A -> Z
-            case "age" -> sorted.sort(new ComparePenguinByAge()); // ascending
-            case "height" -> sorted.sort(null); // natural order (Comparable)
-            default -> {}
-        }
-
-        return sorted;
+        return penguins;
     }
 
     public Map<String, Object> veterinarySummary() {
         Map<String, Object> summary = new HashMap<>();
+        summary.put("totalSick", veterinaryClinic.getAllAnimals().size());
         Map<String, Integer> byType = new HashMap<>();
-
-        Set<Animal> allAnimals = (veterinaryClinic != null) ? veterinaryClinic.getAllAnimals() : null;
-        if (allAnimals == null || allAnimals.isEmpty()) {
-            summary.put("totalSick", 0);
-            summary.put("byType", byType);
-            return summary;
+        String animalClassName;
+        for (Object animal : veterinaryClinic.getAllAnimals()) {
+            animalClassName = animal.getClass().getSimpleName();
+            if (byType.containsKey(animalClassName)) {
+                byType.put(animalClassName, byType.get(animalClassName) + 1);
+            } else {
+                byType.put(animalClassName, 1);
+            }
         }
-
-        for (Animal a : allAnimals) {
-            String type = a.getClass().getSimpleName();
-            byType.compute(type, (k, count) -> (count == null) ? 1 : count + 1);
-        }
-
-        summary.put("totalSick", allAnimals.size());
         summary.put("byType", byType);
         return summary;
     }

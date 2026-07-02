@@ -3,7 +3,9 @@ package com.example.zoo.ass3.models;
 import com.example.zoo.ass3.exceptions.GeneralException;
 import com.example.zoo.ass3.general.enums.Gender;
 
-public class Lion extends Predator {
+import java.io.Serializable;
+
+public class Lion extends Predator implements Serializable {
     private final static int MAX_EAT = 25;
 
     public Lion(String name, int age, double weight, Gender gender) throws GeneralException {

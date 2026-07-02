@@ -16,9 +16,7 @@ public class VeterinaryClinic<T extends Animal> implements IVeterinaryClinic<T>,
 
     @Override
     public void addTreatment(T animal, MedicalTreatment treatment) {
-        addAnimal(animal);
-
-        records.get(animal).add(treatment);
+        records.computeIfAbsent(animal, k -> new ArrayList<>()).add(treatment);
     }
 
     @Override

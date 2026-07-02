@@ -6,22 +6,25 @@ import com.example.zoo.ass3.exceptions.NameException;
 import com.example.zoo.ass3.exceptions.WeightException;
 import com.example.zoo.ass3.general.enums.Gender;
 
-public abstract class Predator extends Animal {
-    public final static int MAX_AGE = 15;
+import java.io.Serializable;
+
+public abstract class Predator extends Animal implements Serializable {
+    public final static int MAX_AGE = 30;
     protected final static double MALE_FACTOR = 0.02f;
     protected final static double FEMALE_FACTOR = 0.03f;
+    public final static int LIFE_EXPECTANCY = 15;
     protected String name;
     protected double weight;
     protected Gender gender;
 
     public Predator(String name, int age, double weight, Gender gender) throws GeneralException {
+        super(LIFE_EXPECTANCY);
         setName(name);
         setAge(age);
         setWeight(weight);
         setGender(gender);
     }
 
-    @Override
     public double feed() {
         return (int) (weight * age * (gender == Gender.MALE ? MALE_FACTOR : FEMALE_FACTOR));
     }
@@ -44,6 +47,9 @@ public abstract class Predator extends Animal {
         this.age = age;
     }
 
+    public int getAge() {
+        return age;
+    }
     public double getWeight() {
         return weight;
     }
@@ -64,12 +70,14 @@ public abstract class Predator extends Animal {
     }
 
     @Override
-    public int getMaxAge() {
-        return MAX_AGE;
+    public String getUnit() {
+        return "Kg of meat";
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + ": " + name + ", age: " + age + ", weight: " + weight + ", gender: " + gender;
     }
+
+
 }

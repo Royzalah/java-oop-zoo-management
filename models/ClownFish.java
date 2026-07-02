@@ -6,19 +6,19 @@ import com.example.zoo.ass3.exceptions.GeneralException;
 import com.example.zoo.ass3.general.enums.Color;
 import com.example.zoo.ass3.general.enums.Pattern;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import static com.example.zoo.ass3.general.DataUtils.colorExist;
 
-public class ClownFish extends Fish {
-    private final static int MAX_AGE = 8;
-
+public class ClownFish extends Fish implements Serializable {
     private final static double EAT = 2f;
     public static final Color[] AVAILABLE_COLORS = {Color.WHITE, Color.ORANGE, Color.BLACK};
+    public final static int LIFE_EXPECTANCY = 8;
     private Color[] colors;
 
     public ClownFish(int age, double length, Color[] colors) throws GeneralException {
-        super(age, length, Pattern.STRIPES);
+        super(age, length, Pattern.STRIPES, LIFE_EXPECTANCY);
         setColors(colors);
     }
 
@@ -42,12 +42,8 @@ public class ClownFish extends Fish {
 
     @Override
     public double feed() {
+        happiness = MAX_HAPPINESS;
         return EAT;
-    }
-
-    @Override
-    public int getMaxAge() {
-        return MAX_AGE;
     }
 
     @Override

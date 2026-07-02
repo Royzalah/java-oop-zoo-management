@@ -4,28 +4,25 @@ import com.example.zoo.ass3.exceptions.GeneralException;
 import com.example.zoo.ass3.general.enums.Color;
 import com.example.zoo.ass3.general.enums.Pattern;
 
-public class AquariumFish extends Fish {
-    public final static int MAX_AGE = 25;
+import java.io.Serializable;
+
+public class AquariumFish extends Fish implements Serializable {
+    public final static int LIFE_EXPECTANCY = 25;
     private final static int ADULT = 3;
     private final static int CHILD_EAT = 3;
     private final Color[] colors;
 
     public AquariumFish(int age, double length, Pattern pattern, Color[] colors) throws GeneralException {
-        super(age, length, pattern);
+        super(age, length, pattern, LIFE_EXPECTANCY);
         this.colors = colors;
     }
 
-    @Override
     public double feed() {
+        happiness = MAX_HAPPINESS;
         if (age < ADULT) {
             return CHILD_EAT;
         }
         return length + CHILD_EAT;
-    }
-
-    @Override
-    public int getMaxAge() {
-        return MAX_AGE;
     }
 
     @Override

@@ -6,13 +6,16 @@ import com.example.zoo.ass3.exceptions.LengthException;
 import com.example.zoo.ass3.general.enums.Color;
 import com.example.zoo.ass3.general.enums.Pattern;
 
-public abstract class Fish extends Animal {
+import java.io.Serializable;
+
+public abstract class Fish extends Animal implements Serializable {
     public final static int MAX_AGE = 30;
     public final static int MAX_LENGTH = 50;
     protected double length;
     protected Pattern pattern;
 
-    public Fish(int age, double length, Pattern pattern) throws GeneralException {
+    public Fish(int age, double length, Pattern pattern, int lifeExpectancy) throws GeneralException {
+        super(lifeExpectancy);
         setAge(age);
         setLength(length);
         setPattern(pattern);
@@ -50,6 +53,12 @@ public abstract class Fish extends Animal {
     public void setPattern(Pattern pattern) {
         this.pattern = pattern;
     }
+
+    @Override
+    public String getUnit() {
+        return "dish of fish food";
+    }
+
 
     @Override
     public String toString() {

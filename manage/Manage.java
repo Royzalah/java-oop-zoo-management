@@ -1,4 +1,3 @@
-
 package com.example.zoo.ass3.manage;
 
 import com.example.zoo.ass3.exceptions.GeneralException;
@@ -22,24 +21,51 @@ public class Manage implements IZoo, Serializable {
     @Override
     public void init() throws GeneralException {
         File file = new File(FILENAME);
+
+        if (file.exists()) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+                zoo = (Zoo) in.readObject();
+                return;
+            } catch (IOException | ClassNotFoundException e) {
+
+                if (!file.delete()) {
+                    System.err.println("Warning: failed to delete corrupted zoo.data");
+                }
+            }
+        }
         zoo = new Zoo("TVLZoo", new Address("Tel Aviv", "Bazel", "22"));
         zoo.init();
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            out.writeObject(zoo);
+        } catch (IOException e) {
+            throw new GeneralException("Failed to save zoo data to file, Error: " + e.getMessage());
+        }
     }
 
     @Override
     public String loadData() {
-        String filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath + FILENAME))) {
-            Object obj = ois.readObject();
-
-            if (obj instanceof Zoo z) {
-                zoo = z;
-            }
-
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("Failed to load zoo", e);
+        try {
+            init();
+        } catch (GeneralException e) {
+            return "Warning: failed to load zoo.data";
         }
         return "Succeed load zoo.data";
+    }
+
+    @Override
+    public Map<Animal, List<MedicalTreatment>> getVeterinaryClinic() {
+        return zoo.getVeterinaryClinic();
+    }
+
+    @Override
+    public String exit() {
+        File file = new File("zoo.data");
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            out.writeObject(zoo);
+        } catch (IOException e) {
+            return "Failed to save zoo data to file, Error: " + e.getMessage();
+        }
+        return "All Data saved";
     }
 
     @Override
@@ -121,8 +147,27 @@ public class Manage implements IZoo, Serializable {
     }
 
     @Override
-    public List<Penguin> getPenguins(String sortBy) {//height /age /name
-        return zoo.getPenguins(sortBy);
+    public List<Penguin> getPenguins(String sortBy) {
+        try {
+            List<Penguin> penguins = zoo.getPenguins();
+            switch (sortBy) {
+                case "name":
+                    penguins.sort(Comparator.comparing(Penguin::getName));
+                    break;
+                case "age":
+                    penguins.sort(Comparator.comparingInt(Penguin::getAge));
+                    break;
+                case "height":
+                default:
+                    Collections.sort(penguins);
+                    break;
+            }
+
+            return penguins;
+
+        } catch (GeneralException e) {
+            return new ArrayList<>();
+        }
     }
 
     @Override
@@ -138,22 +183,5 @@ public class Manage implements IZoo, Serializable {
     @Override
     public String showAnimalsSounds() {
         return zoo.showAnimalsSounds();
-    }
-
-    @Override
-    public Map<Animal, List<MedicalTreatment>> getVeterinaryClinic() {
-        return zoo.getVeterinaryClinic();
-    }
-
-    @Override
-    public String exit() {
-        String filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator;
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath + FILENAME))) {
-            oos.writeObject(zoo);
-            oos.close();
-            return "All Data saved";
-        } catch (IOException e) {
-            throw new UncheckedIOException("Failed to save zoo", e);
-        }
     }
 }
